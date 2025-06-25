@@ -51,7 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         description: `Welcome back, ${result.user.displayName}!`,
       });
     } catch (error) {
-      console.error("Error signing in with Google: ", error);
+      // Use console.warn to avoid triggering the Next.js error overlay for a handled error.
+      console.warn("Error signing in with Google: ", error);
       if ((error as any)?.code === 'auth/configuration-not-found') {
          toast({
             variant: "destructive",

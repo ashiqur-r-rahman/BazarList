@@ -17,8 +17,16 @@ let auth: Auth | undefined;
 let googleProvider: GoogleAuthProvider | undefined;
 let firebaseInitialized = false;
 
-// Initialize Firebase only if all keys are present
-if (firebaseConfig.apiKey) {
+// Check if all required environment variables are set
+const allConfigSet =
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.storageBucket &&
+  firebaseConfig.messagingSenderId &&
+  firebaseConfig.appId;
+
+if (allConfigSet) {
     try {
         app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
         auth = getAuth(app);
@@ -26,9 +34,10 @@ if (firebaseConfig.apiKey) {
         firebaseInitialized = true;
     } catch(e) {
         console.error('Firebase initialization error', e);
+        // Keep firebaseInitialized as false if initialization fails
     }
 } else {
-    console.warn("Firebase API Key is missing. Firebase features will be disabled. Please add NEXT_PUBLIC_FIREBASE_API_KEY to your .env.local file");
+    console.warn("Firebase configuration is incomplete. Firebase features will be disabled. Please check your .env.local file.");
 }
 
 
