@@ -16,12 +16,14 @@ export default function HistoryDetailPage() {
   const params = useParams();
   const { getBazarList, loading } = useBazar();
   const [list, setList] = useState<BazarList | undefined>(undefined);
+  const [listFound, setListFound] = useState<boolean | null>(null);
 
   useEffect(() => {
     if (!loading && params.id) {
       const bazarId = Array.isArray(params.id) ? params.id[0] : params.id;
       const foundList = getBazarList(bazarId);
       setList(foundList);
+      setListFound(!!foundList);
     }
   }, [params.id, getBazarList, loading]);
 
@@ -35,7 +37,7 @@ export default function HistoryDetailPage() {
     }, 0);
   }, [list]);
 
-  if (loading) {
+  if (loading || listFound === null) {
     return (
         <AppLayout>
             <div className="space-y-6">
@@ -70,7 +72,7 @@ export default function HistoryDetailPage() {
                 {list.items.map(item => (
                   <div key={item.id} className="flex items-center p-2 rounded-md bg-secondary/50">
                     <div className="mr-4">
-                        {item.isChecked ? <Check className="text-green-600" /> : <X className="text-destructive" />}
+                        {item.isChecked ? <Check className="text-accent" /> : <X className="text-destructive" />}
                     </div>
                     <span className="flex-grow text-lg">{item.name}</span>
                     <span className="text-muted-foreground mr-4">{item.unit}</span>
@@ -78,7 +80,7 @@ export default function HistoryDetailPage() {
                   </div>
                 ))}
               </CardContent>
-              <CardFooter className="flex justify-end items-center bg-gray-100 dark:bg-gray-800 p-4 rounded-b-lg">
+              <CardFooter className="flex justify-end items-center bg-muted p-4 rounded-b-lg">
                 <h3 className="text-xl font-bold font-headline">Total: ${totalAmount.toFixed(2)}</h3>
               </CardFooter>
             </Card>

@@ -208,7 +208,7 @@ export default function NewBazarPage() {
                   </div>
                 ))}
               </CardContent>
-              <CardFooter className="flex justify-between items-center bg-gray-100 dark:bg-gray-800 p-4 rounded-b-lg">
+              <CardFooter className="flex justify-between items-center bg-muted p-4 rounded-b-lg">
                 <h3 className="text-xl font-bold font-headline">Total: ${totalAmount.toFixed(2)}</h3>
                 <Button onClick={handleFinish} disabled={items.length === 0}>Finish</Button>
               </CardFooter>
