@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,12 +17,12 @@ import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Utensils } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, signInWithGoogle, loading } = useAuth();
-  const { toast } = useToast();
+  const { user, signInWithGoogle, signInWithEmailAndPassword, loading } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (!loading && user) {
@@ -30,14 +30,10 @@ export default function LoginPage() {
     }
   }, [user, loading, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This is mock, we encourage Google Login.
-    toast({
-      variant: "destructive",
-      title: "Email/Password Login Not Implemented",
-      description: "Please use the 'Login with Google' button for this demo.",
-    });
+    if (!email || !password) return;
+    await signInWithEmailAndPassword(email, password);
   };
 
   if (loading) {
@@ -86,6 +82,8 @@ export default function LoginPage() {
                 type="email"
                 placeholder="m@example.com"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -95,7 +93,13 @@ export default function LoginPage() {
                         Forgot your password?
                     </Link>
                 </div>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
             <Button type="submit" className="w-full">
               Login
