@@ -130,19 +130,38 @@ export default function NewBazarPage() {
         return;
     }
 
-    const newList: BazarList = {
-      id: nanoid(),
-      date: bazarDate!.toISOString(),
-      userName: userName,
-      userId: user.uid,
-      items: items,
-    };
-    await addBazarList(newList);
-    toast({
-      title: "Bazar List Saved!",
-      description: "Your new list has been added to your history.",
-    });
-    router.push('/dashboard');
+    if (!bazarDate) {
+      toast({
+          variant: "destructive",
+          title: "Missing Date",
+          description: "Please select a date for the bazar list.",
+      });
+      setStep('date');
+      return;
+    }
+
+    try {
+      const newList: BazarList = {
+        id: nanoid(),
+        date: bazarDate.toISOString(),
+        userName: userName,
+        userId: user.uid,
+        items: items,
+      };
+      await addBazarList(newList);
+      toast({
+        title: "Bazar List Saved!",
+        description: "Your new list has been added to your history.",
+      });
+      router.push('/dashboard');
+    } catch (error) {
+        console.error("Failed to save bazar list:", error);
+        toast({
+            variant: "destructive",
+            title: "Save Failed",
+            description: "An unexpected error occurred while saving your list.",
+        });
+    }
   };
 
   const renderContent = () => {
