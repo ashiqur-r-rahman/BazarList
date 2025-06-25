@@ -35,7 +35,7 @@ export default function HistoryDetailPage() {
     }, 0);
   }, [list]);
 
-  if (loading || !list) {
+  if (loading) {
     return (
         <AppLayout>
             <div className="space-y-6">

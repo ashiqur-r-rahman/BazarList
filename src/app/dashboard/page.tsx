@@ -28,14 +28,14 @@ export default function DashboardPage() {
             </Card>
           </Link>
           <Link href="/history">
-            <Card className="bg-green-200 text-accent-foreground hover:bg-green-300 transition-colors shadow-lg" style={{backgroundColor: '#AEC785'}}>
+            <Card className="bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-2xl font-bold font-headline">
                   History
                 </CardTitle>
                 <History className="h-8 w-8" />
               </CardHeader>
-               <CardDescription className="text-accent-foreground/80 p-6 pt-0">
+               <CardDescription className="text-secondary-foreground/80 p-6 pt-0">
                 View your past shopping lists and expenses.
               </CardDescription>
             </Card>
