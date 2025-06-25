@@ -179,7 +179,7 @@ export default function NewBazarPage() {
                     <Input
                       id="item-amount"
                       type="number"
-                      placeholder="1"
+                      placeholder="0"
                       value={itemAmount}
                       onChange={(e) => setItemAmount(e.target.value)}
                       className="w-[100px]"
