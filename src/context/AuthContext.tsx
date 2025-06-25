@@ -51,21 +51,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         description: `Welcome back, ${result.user.displayName}!`,
       });
     } catch (error) {
+      const errorCode = (error as any)?.code;
       // Use console.warn to avoid triggering the Next.js error overlay for a handled error.
       console.warn("Error signing in with Google: ", error);
-      if ((error as any)?.code === 'auth/configuration-not-found') {
-         toast({
-            variant: "destructive",
-            title: "Configuration Error",
-            description: "Google Sign-In is not enabled for this project. Please enable it in your Firebase Console.",
-          });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Login Failed",
-          description: "There was a problem signing in with Google. Please try again.",
-        });
+
+      let title = "Login Failed";
+      let description = "An unexpected error occurred. Please try again.";
+
+      switch (errorCode) {
+        case 'auth/configuration-not-found':
+          title = "Configuration Error";
+          description = "Google Sign-In is not enabled for this project. Please enable it in your Firebase Console.";
+          break;
+        case 'auth/popup-closed-by-user':
+          // This is a common case and doesn't need an error toast.
+          console.log("User closed the sign-in popup.");
+          return; // Exit without showing a toast
+        case 'auth/popup-blocked-by-browser':
+          title = "Popup Blocked";
+          description = "Your browser blocked the login popup. Please allow popups for this site and try again.";
+          break;
+        case 'auth/unauthorized-domain':
+            title = "Unauthorized Domain";
+            description = "This domain is not authorized for Google Sign-In. Please add it to the authorized domains in your Firebase project settings.";
+            break;
+        default:
+          description = `There was a problem signing in with Google. (Error: ${errorCode || 'UNKNOWN'})`;
+          break;
       }
+      
+      toast({
+        variant: "destructive",
+        title: title,
+        description: description,
+      });
     }
   };
 
