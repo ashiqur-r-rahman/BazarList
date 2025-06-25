@@ -17,10 +17,12 @@ import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Utensils } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
   const { user, signInWithGoogle, loading } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && user) {
@@ -31,7 +33,11 @@ export default function LoginPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // This is mock, we encourage Google Login.
-    alert("Please use Google Login for this demo.");
+    toast({
+      variant: "destructive",
+      title: "Email/Password Login Not Implemented",
+      description: "Please use the 'Login with Google' button for this demo.",
+    });
   };
 
   if (loading) {

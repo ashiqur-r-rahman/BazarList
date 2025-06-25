@@ -17,10 +17,12 @@ import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Utensils } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignupPage() {
   const router = useRouter();
   const { user, signInWithGoogle, loading } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!loading && user) {
@@ -30,7 +32,11 @@ export default function SignupPage() {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Please use Google Sign up for this demo.");
+    toast({
+      variant: "destructive",
+      title: "Email/Password Signup Not Implemented",
+      description: "Please use the 'Sign up with Google' button for this demo.",
+    });
   };
 
   if (loading) {
