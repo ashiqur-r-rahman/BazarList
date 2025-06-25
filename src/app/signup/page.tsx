@@ -15,12 +15,12 @@ import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Utensils } from "lucide-react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login logic
+    // Mock signup logic
     router.push("/dashboard");
   };
 
@@ -28,16 +28,20 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="mx-auto max-w-sm w-full shadow-lg">
         <CardHeader className="text-center">
-            <div className="flex justify-center items-center gap-2 mb-2">
-                <Utensils className="h-8 w-8 text-primary" />
-                <CardTitle className="text-3xl font-headline">BazarList</CardTitle>
-            </div>
+          <div className="flex justify-center items-center gap-2 mb-2">
+            <Utensils className="h-8 w-8 text-primary" />
+            <CardTitle className="text-3xl font-headline">BazarList</CardTitle>
+          </div>
           <CardDescription>
-            Enter your email below to login to your account
+            Create an account to start managing your bazar lists
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="grid gap-4">
+          <form onSubmit={handleSignup} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="full-name">Full Name</Label>
+              <Input id="full-name" placeholder="John Doe" required />
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -48,26 +52,21 @@ export default function LoginPage() {
               />
             </div>
             <div className="grid gap-2">
-                <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link href="#" className="ml-auto inline-block text-sm underline">
-                        Forgot your password?
-                    </Link>
-                </div>
+              <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" required />
             </div>
             <Button type="submit" className="w-full">
-              Login
+              Create an account
             </Button>
             <Button variant="outline" className="w-full">
               <GoogleIcon className="mr-2 h-4 w-4" />
-              Login with Google
+              Sign up with Google
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="underline">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/" className="underline">
+              Login
             </Link>
           </div>
         </CardContent>
