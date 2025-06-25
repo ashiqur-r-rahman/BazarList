@@ -205,13 +205,13 @@ export default function NewBazarPage() {
                     <Checkbox id={`item-${item.id}`} checked={item.isChecked} onCheckedChange={(checked) => handleCheckChange(Boolean(checked), item)} className="mr-4" />
                     <Label htmlFor={`item-${item.id}`} className="flex-grow text-lg">{item.name}</Label>
                     <span className="text-muted-foreground mr-4">{item.amount} {item.unit}</span>
-                    {item.price !== null && <span className="font-bold mr-4">${item.price.toFixed(2)}</span>}
+                    {item.price !== null && <span className="font-bold mr-4">৳{item.price.toFixed(2)}</span>}
                     <Button variant="ghost" size="icon" onClick={() => handleRemoveItem(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                 ))}
               </CardContent>
               <CardFooter className="flex justify-between items-center bg-muted p-4 rounded-b-lg">
-                <h3 className="text-xl font-bold font-headline">Total: ${totalAmount.toFixed(2)}</h3>
+                <h3 className="text-xl font-bold font-headline">Total: ৳{totalAmount.toFixed(2)}</h3>
                 <Button onClick={handleFinish} disabled={items.length === 0}>Finish</Button>
               </CardFooter>
             </Card>

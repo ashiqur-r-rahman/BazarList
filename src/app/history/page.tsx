@@ -48,7 +48,7 @@ export default function HistoryPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{list.items.length} items</p>
-                    <p className="text-2xl font-bold">${calculateTotal(list).toFixed(2)}</p>
+                    <p className="text-2xl font-bold">৳{calculateTotal(list).toFixed(2)}</p>
                   </CardContent>
                 </Card>
               </Link>

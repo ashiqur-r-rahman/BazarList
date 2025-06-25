@@ -76,12 +76,12 @@ export default function HistoryDetailPage() {
                     </div>
                     <span className="flex-grow text-lg">{item.name}</span>
                     <span className="text-muted-foreground mr-4">{item.amount} {item.unit}</span>
-                    {item.price !== null && <span className="font-bold mr-4">${item.price.toFixed(2)}</span>}
+                    {item.price !== null && <span className="font-bold mr-4">৳{item.price.toFixed(2)}</span>}
                   </div>
                 ))}
               </CardContent>
               <CardFooter className="flex justify-end items-center bg-muted p-4 rounded-b-lg">
-                <h3 className="text-xl font-bold font-headline">Total: ${totalAmount.toFixed(2)}</h3>
+                <h3 className="text-xl font-bold font-headline">Total: ৳{totalAmount.toFixed(2)}</h3>
               </CardFooter>
             </Card>
         </div>
