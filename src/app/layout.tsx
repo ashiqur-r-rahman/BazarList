@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -16,17 +16,21 @@ const ptSans = PT_Sans({
 export const metadata: Metadata = {
   title: 'BazarList Simplified',
   description: 'Your simplified shopping list manager.',
-  manifest: '/manifest.json?v=3',
-  themeColor: '#F7F4E5',
+  manifest: '/manifest.json?v=6',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'BazarList',
   },
   icons: {
-    apple: 'https://placehold.co/180x180.png',
+    icon: '/icon-192x192.png',
+    apple: '/apple-touch-icon.png',
   },
 };
+
+export const viewport: Viewport = {
+  themeColor: '#F7F4E5',
+}
 
 export default function RootLayout({
   children,
