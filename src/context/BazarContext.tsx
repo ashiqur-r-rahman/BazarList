@@ -17,6 +17,21 @@ interface BazarContextType {
 
 const BazarContext = createContext<BazarContextType | undefined>(undefined);
 
+const handleFirestoreError = (error: any, action: 'load' | 'save' | 'delete', toast: (props: any) => void) => {
+    console.error(`Failed to ${action} bazar lists in Firestore`, error);
+    let description = `Could not ${action} your bazar lists. Please try again.`;
+    
+    if (error.code === 'permission-denied') {
+        description = `You do not have permission to ${action} lists. Please check your Firestore security rules in the Firebase Console.`;
+    }
+    
+    toast({
+        variant: "destructive",
+        title: "Database Error",
+        description,
+    });
+};
+
 export const BazarProvider = ({ children }: { children: ReactNode }) => {
   const [bazarLists, setBazarLists] = useState<BazarList[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,12 +48,7 @@ export const BazarProvider = ({ children }: { children: ReactNode }) => {
           const lists = querySnapshot.docs.map(doc => doc.data() as BazarList);
           setBazarLists(lists);
         } catch (error) {
-          console.error("Failed to fetch bazar lists from Firestore", error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Could not load your bazar lists.",
-          });
+          handleFirestoreError(error, 'load', toast);
         } finally {
           setLoading(false);
         }
@@ -62,8 +72,7 @@ export const BazarProvider = ({ children }: { children: ReactNode }) => {
       await setDoc(doc(db, "bazar_lists", list.id), list);
       setBazarLists(prevLists => [...prevLists, list]);
     } catch (error) {
-      console.error("Failed to save to Firestore", error);
-      toast({ variant: "destructive", title: "Save Error", description: "Could not save your bazar list." });
+      handleFirestoreError(error, 'save', toast);
     }
   };
 
@@ -89,8 +98,7 @@ export const BazarProvider = ({ children }: { children: ReactNode }) => {
         setBazarLists([]);
 
       } catch (error) {
-        console.error("Failed to clear history in Firestore", error);
-        toast({ variant: "destructive", title: "Error", description: "Could not clear history." });
+        handleFirestoreError(error, 'delete', toast);
       }
   };
 
