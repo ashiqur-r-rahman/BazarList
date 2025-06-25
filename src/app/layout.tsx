@@ -16,6 +16,13 @@ const ptSans = PT_Sans({
 export const metadata: Metadata = {
   title: 'BazarList Simplified',
   description: 'Your simplified shopping list manager.',
+  manifest: '/manifest.json',
+  themeColor: '#F7F4E5',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'BazarList',
+  },
 };
 
 export default function RootLayout({
