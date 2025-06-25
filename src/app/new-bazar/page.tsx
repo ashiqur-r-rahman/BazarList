@@ -202,8 +202,8 @@ export default function NewBazarPage() {
 
             <Card className="shadow-lg">
               <CardContent className="p-4">
-                <form onSubmit={handleAddItem} className="flex gap-2 items-end">
-                  <div className="flex-grow">
+                <form onSubmit={handleAddItem} className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
+                  <div className="flex-grow min-w-[100px]">
                      <Label htmlFor="item-name">Item Name</Label>
                     <Input id="item-name" placeholder="e.g., Rice, Potatoes" value={itemName} onChange={(e) => setItemName(e.target.value)} />
                   </div>
@@ -215,14 +215,14 @@ export default function NewBazarPage() {
                       placeholder="0"
                       value={itemAmount}
                       onChange={(e) => setItemAmount(e.target.value)}
-                      className="w-[100px]"
+                      className="w-20"
                       min="0"
                     />
                   </div>
                   <div>
                     <Label htmlFor="item-unit">Unit</Label>
                     <Select value={itemUnit} onValueChange={(value: BazarItem['unit']) => setItemUnit(value)}>
-                      <SelectTrigger id="item-unit" className="w-[100px]">
+                      <SelectTrigger id="item-unit" className="w-24">
                         <SelectValue placeholder="Unit" />
                       </SelectTrigger>
                       <SelectContent>
@@ -296,5 +296,3 @@ export default function NewBazarPage() {
     </AppLayout>
   );
 }
-
-    
