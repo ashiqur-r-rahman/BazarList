@@ -120,14 +120,24 @@ export default function NewBazarPage() {
     }, 0);
   }, [items]);
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    if (!user) {
+        toast({
+            variant: "destructive",
+            title: "Not Logged In",
+            description: "You must be logged in to save a list.",
+        });
+        return;
+    }
+
     const newList: BazarList = {
       id: nanoid(),
       date: bazarDate!.toISOString(),
       userName: userName,
+      userId: user.uid,
       items: items,
     };
-    addBazarList(newList);
+    await addBazarList(newList);
     toast({
       title: "Bazar List Saved!",
       description: "Your new list has been added to your history.",

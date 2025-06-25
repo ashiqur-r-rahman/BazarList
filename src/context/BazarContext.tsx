@@ -2,12 +2,16 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { BazarList } from '@/lib/types';
+import { useAuth } from './AuthContext';
+import { db, firebaseInitialized } from '@/lib/firebase';
+import { collection, query, where, getDocs, doc, setDoc, writeBatch } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 interface BazarContextType {
   bazarLists: BazarList[];
-  addBazarList: (list: BazarList) => void;
+  addBazarList: (list: BazarList) => Promise<void>;
   getBazarList: (id: string) => BazarList | undefined;
-  clearAllHistory: () => void;
+  clearAllHistory: () => Promise<void>;
   loading: boolean;
 }
 
@@ -16,40 +20,82 @@ const BazarContext = createContext<BazarContextType | undefined>(undefined);
 export const BazarProvider = ({ children }: { children: ReactNode }) => {
   const [bazarLists, setBazarLists] = useState<BazarList[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
+    const fetchBazarLists = async () => {
+      if (user && db) {
+        setLoading(true);
+        try {
+          const q = query(collection(db, "bazar_lists"), where("userId", "==", user.uid));
+          const querySnapshot = await getDocs(q);
+          const lists = querySnapshot.docs.map(doc => doc.data() as BazarList);
+          setBazarLists(lists);
+        } catch (error) {
+          console.error("Failed to fetch bazar lists from Firestore", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not load your bazar lists.",
+          });
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        // If there's no user, clear the lists and stop loading.
+        setBazarLists([]);
+        setLoading(false);
+      }
+    };
+    
+    if (firebaseInitialized) {
+        fetchBazarLists();
+    } else {
+        setLoading(false)
+    }
+
+  }, [user, toast]);
+
+  const addBazarList = async (list: BazarList) => {
+    if (!user || !db) {
+      toast({ variant: "destructive", title: "Authentication Error", description: "You must be logged in to save a list." });
+      return;
+    }
     try {
-      const item = window.localStorage.getItem('bazarLists');
-      if (item) {
-        setBazarLists(JSON.parse(item));
-      }
+      await setDoc(doc(db, "bazar_lists", list.id), list);
+      setBazarLists(prevLists => [...prevLists, list]);
     } catch (error) {
-      console.error("Failed to load from local storage", error);
-    } finally {
-      setLoading(false);
+      console.error("Failed to save to Firestore", error);
+      toast({ variant: "destructive", title: "Save Error", description: "Could not save your bazar list." });
     }
-  }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      try {
-        window.localStorage.setItem('bazarLists', JSON.stringify(bazarLists));
-      } catch (error) {
-        console.error("Failed to save to local storage", error);
-      }
-    }
-  }, [bazarLists, loading]);
-
-  const addBazarList = (list: BazarList) => {
-    setBazarLists(prevLists => [...prevLists, list]);
   };
 
   const getBazarList = (id: string) => {
     return bazarLists.find(list => list.id === id);
   };
   
-  const clearAllHistory = () => {
-    setBazarLists([]);
+  const clearAllHistory = async () => {
+    if (!user || !db) {
+       toast({ variant: "destructive", title: "Authentication Error", description: "You must be logged in to clear history." });
+       return;
+    }
+     try {
+        const q = query(collection(db, "bazar_lists"), where("userId", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+        
+        const batch = writeBatch(db);
+        querySnapshot.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        
+        await batch.commit();
+        setBazarLists([]);
+
+      } catch (error) {
+        console.error("Failed to clear history in Firestore", error);
+        toast({ variant: "destructive", title: "Error", description: "Could not clear history." });
+      }
   };
 
   return (

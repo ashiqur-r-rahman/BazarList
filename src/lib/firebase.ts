@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
 
 // IMPORTANT: Create a .env.local file in the root of your project
 // and add your Firebase configuration there.
@@ -14,6 +15,7 @@ const firebaseConfig = {
 
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
+let db: Firestore | undefined;
 let googleProvider: GoogleAuthProvider | undefined;
 let firebaseInitialized = false;
 
@@ -30,6 +32,7 @@ if (allConfigSet) {
     try {
         app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
         auth = getAuth(app);
+        db = getFirestore(app);
         googleProvider = new GoogleAuthProvider();
         firebaseInitialized = true;
     } catch(e) {
@@ -41,4 +44,4 @@ if (allConfigSet) {
 }
 
 
-export { app, auth, googleProvider, firebaseInitialized };
+export { app, auth, db, googleProvider, firebaseInitialized };

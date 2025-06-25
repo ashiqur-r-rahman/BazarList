@@ -21,6 +21,7 @@ import { Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import type { BazarList } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HistoryPage() {
   const { bazarLists, loading, clearAllHistory } = useBazar();
@@ -39,8 +40,8 @@ export default function HistoryPage() {
     return [...bazarLists].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [bazarLists]);
   
-  const handleDeleteAll = () => {
-    clearAllHistory();
+  const handleDeleteAll = async () => {
+    await clearAllHistory();
     toast({
       title: "History Cleared",
       description: "All your bazar lists have been deleted.",
@@ -48,7 +49,21 @@ export default function HistoryPage() {
   };
 
   if (loading) {
-    return <AppLayout><div className="text-center">Loading history...</div></AppLayout>
+    return (
+        <AppLayout>
+            <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                    <Skeleton className="h-10 w-64" />
+                    <Skeleton className="h-10 w-48" />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                </div>
+            </div>
+        </AppLayout>
+    )
   }
 
   return (
@@ -68,7 +83,7 @@ export default function HistoryPage() {
                         <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete all your bazar lists from your local storage.
+                            This action cannot be undone. This will permanently delete all your bazar lists from the database.
                         </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
