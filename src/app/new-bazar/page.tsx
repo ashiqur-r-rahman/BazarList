@@ -40,6 +40,7 @@ export default function NewBazarPage() {
 
   // Item form state
   const [itemName, setItemName] = useState('');
+  const [itemAmount, setItemAmount] = useState('');
   const [itemUnit, setItemUnit] = useState<BazarItem['unit']>('pcs');
 
   // Price entry dialog state
@@ -55,16 +56,26 @@ export default function NewBazarPage() {
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!itemName.trim()) return;
+    const amount = parseFloat(itemAmount);
+    if (!itemName.trim() || isNaN(amount) || amount <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Item",
+        description: "Please enter a valid item name and amount.",
+      });
+      return;
+    }
     const newItem: BazarItem = {
       id: crypto.randomUUID(),
       name: itemName,
+      amount: amount,
       unit: itemUnit,
       price: null,
       isChecked: false,
     };
     setItems(prev => [...prev, newItem]);
     setItemName('');
+    setItemAmount('');
   };
 
   const handleRemoveItem = (id: string) => {
@@ -154,6 +165,18 @@ export default function NewBazarPage() {
                     <Input id="item-name" placeholder="e.g., Rice, Potatoes" value={itemName} onChange={(e) => setItemName(e.target.value)} />
                   </div>
                   <div>
+                    <Label htmlFor="item-amount">Amount</Label>
+                    <Input
+                      id="item-amount"
+                      type="number"
+                      placeholder="1"
+                      value={itemAmount}
+                      onChange={(e) => setItemAmount(e.target.value)}
+                      className="w-[100px]"
+                      min="0"
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="item-unit">Unit</Label>
                     <Select value={itemUnit} onValueChange={(value: BazarItem['unit']) => setItemUnit(value)}>
                       <SelectTrigger id="item-unit" className="w-[100px]">
@@ -181,7 +204,7 @@ export default function NewBazarPage() {
                   <div key={item.id} className="flex items-center p-2 rounded-md bg-secondary/50">
                     <Checkbox id={`item-${item.id}`} checked={item.isChecked} onCheckedChange={(checked) => handleCheckChange(Boolean(checked), item)} className="mr-4" />
                     <Label htmlFor={`item-${item.id}`} className="flex-grow text-lg">{item.name}</Label>
-                    <span className="text-muted-foreground mr-4">{item.unit}</span>
+                    <span className="text-muted-foreground mr-4">{item.amount} {item.unit}</span>
                     {item.price !== null && <span className="font-bold mr-4">${item.price.toFixed(2)}</span>}
                     <Button variant="ghost" size="icon" onClick={() => handleRemoveItem(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>

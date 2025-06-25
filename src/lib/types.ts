@@ -1,6 +1,7 @@
 export type BazarItem = {
   id: string;
   name: string;
+  amount: number;
   unit: 'pcs' | 'kg' | 'liter' | 'dz' | 'gram';
   price: number | null;
   isChecked: boolean;

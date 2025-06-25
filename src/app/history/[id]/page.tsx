@@ -75,7 +75,7 @@ export default function HistoryDetailPage() {
                         {item.isChecked ? <Check className="text-accent" /> : <X className="text-destructive" />}
                     </div>
                     <span className="flex-grow text-lg">{item.name}</span>
-                    <span className="text-muted-foreground mr-4">{item.unit}</span>
+                    <span className="text-muted-foreground mr-4">{item.amount} {item.unit}</span>
                     {item.price !== null && <span className="font-bold mr-4">${item.price.toFixed(2)}</span>}
                   </div>
                 ))}
