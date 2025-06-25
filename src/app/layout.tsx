@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'BazarList',
   },
+  icons: {
+    apple: 'https://placehold.co/180x180.png',
+  },
 };
 
 export default function RootLayout({
