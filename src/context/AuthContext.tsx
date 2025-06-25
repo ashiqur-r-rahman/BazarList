@@ -5,8 +5,8 @@ import {
   onAuthStateChanged,
   User,
   signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword as firebaseCreateUser,
+  signInWithEmailAndPassword as firebaseSignIn,
   updateProfile,
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await firebaseCreateUser(auth, email, password);
       await updateProfile(userCredential.user, { displayName });
       // To ensure the user state is updated with the display name immediately
       setUser({ ...userCredential.user, displayName });
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      const result = await firebaseSignIn(auth, email, password);
       router.push('/dashboard');
       toast({ title: "Login Successful", description: `Welcome back, ${result.user.displayName || 'user'}!` });
     } catch (error) {
