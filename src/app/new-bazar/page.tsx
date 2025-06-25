@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlusCircle, Trash2, ArrowLeft } from 'lucide-react';
+import { PlusCircle, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -26,6 +26,7 @@ export default function NewBazarPage() {
   const { toast } = useToast();
 
   const [step, setStep] = useState<'date' | 'list'>('date');
+  const [isSaving, setIsSaving] = useState(false);
   
   // Bazar data
   const [bazarDate, setBazarDate] = useState<Date | undefined>();
@@ -140,6 +141,7 @@ export default function NewBazarPage() {
       return;
     }
 
+    setIsSaving(true);
     try {
       const newList: BazarList = {
         id: nanoid(),
@@ -159,8 +161,10 @@ export default function NewBazarPage() {
         toast({
             variant: "destructive",
             title: "Save Failed",
-            description: "An unexpected error occurred while saving your list.",
+            description: "Could not save your list. Please ensure you have enabled and configured Firestore in your Firebase project.",
         });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -251,7 +255,10 @@ export default function NewBazarPage() {
               </CardContent>
               <CardFooter className="flex justify-between items-center bg-muted p-4 rounded-b-lg">
                 <h3 className="text-xl font-bold font-headline">Total: ৳{totalAmount.toFixed(2)}</h3>
-                <Button onClick={handleFinish} disabled={items.length === 0}>Finish</Button>
+                <Button onClick={handleFinish} disabled={items.length === 0 || isSaving}>
+                  {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSaving ? 'Saving...' : 'Finish'}
+                </Button>
               </CardFooter>
             </Card>
 
@@ -289,3 +296,5 @@ export default function NewBazarPage() {
     </AppLayout>
   );
 }
+
+    
