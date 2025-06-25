@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User, signInWithPopup, FirebaseError } from 'firebase/auth';
+import { onAuthStateChanged, User, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, firebaseInitialized } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      if (error instanceof FirebaseError && error.code === 'auth/configuration-not-found') {
+      if ((error as any)?.code === 'auth/configuration-not-found') {
          toast({
             variant: "destructive",
             title: "Configuration Error",
