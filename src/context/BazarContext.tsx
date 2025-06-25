@@ -7,6 +7,7 @@ interface BazarContextType {
   bazarLists: BazarList[];
   addBazarList: (list: BazarList) => void;
   getBazarList: (id: string) => BazarList | undefined;
+  clearAllHistory: () => void;
   loading: boolean;
 }
 
@@ -46,9 +47,13 @@ export const BazarProvider = ({ children }: { children: ReactNode }) => {
   const getBazarList = (id: string) => {
     return bazarLists.find(list => list.id === id);
   };
+  
+  const clearAllHistory = () => {
+    setBazarLists([]);
+  };
 
   return (
-    <BazarContext.Provider value={{ bazarLists, addBazarList, getBazarList, loading }}>
+    <BazarContext.Provider value={{ bazarLists, addBazarList, getBazarList, clearAllHistory, loading }}>
       {children}
     </BazarContext.Provider>
   );
