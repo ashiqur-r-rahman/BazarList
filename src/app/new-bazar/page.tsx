@@ -57,7 +57,7 @@ export default function NewBazarPage() {
     e.preventDefault();
     if (!itemName.trim()) return;
     const newItem: BazarItem = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: itemName,
       unit: itemUnit,
       price: null,
@@ -101,7 +101,7 @@ export default function NewBazarPage() {
 
   const handleFinish = () => {
     const newList: BazarList = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       date: bazarDate!.toISOString(),
       userName: userName,
       items: items,
