@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: 'BazarList',
   },
   icons: {
-    apple: 'https://placehold.co/180x180.png',
+    apple: '/apple-touch-icon.png',
   },
 };
 
