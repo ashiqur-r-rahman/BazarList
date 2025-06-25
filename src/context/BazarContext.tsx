@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { BazarList } from '@/lib/types';
 import { useAuth } from './AuthContext';
-import { db, firebaseInitialized } from '@/lib/firebase';
+import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, setDoc, writeBatch } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
@@ -43,17 +43,13 @@ export const BazarProvider = ({ children }: { children: ReactNode }) => {
           setLoading(false);
         }
       } else {
-        // If there's no user, clear the lists and stop loading.
+        // If there's no user or db, clear the lists and stop loading.
         setBazarLists([]);
         setLoading(false);
       }
     };
     
-    if (firebaseInitialized) {
-        fetchBazarLists();
-    } else {
-        setLoading(false)
-    }
+    fetchBazarLists();
 
   }, [user, toast]);
 

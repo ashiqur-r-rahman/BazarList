@@ -9,7 +9,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import { auth, googleProvider, firebaseInitialized } from '@/lib/firebase';
+import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
 
@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!firebaseInitialized || !auth) {
+    // The listener is attached only if Firebase was initialized correctly
+    if (!auth) {
         setLoading(false);
         return;
     }
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUpWithEmailAndPassword = async (email: string, password: string, displayName: string) => {
-    if (!firebaseInitialized || !auth) {
+    if (!auth) {
         toast({ variant: "destructive", title: "Firebase Not Configured" });
         return;
     }
@@ -69,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithEmailAndPassword = async (email: string, password: string) => {
-    if (!firebaseInitialized || !auth) {
+    if (!auth) {
       toast({ variant: "destructive", title: "Firebase Not Configured" });
       return;
     }
@@ -90,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const signInWithGoogle = async () => {
-    if (!firebaseInitialized || !auth || !googleProvider) {
+    if (!auth || !googleProvider) {
         toast({
           variant: "destructive",
           title: "Firebase Not Configured",
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-     if (!firebaseInitialized || !auth) {
+     if (!auth) {
         toast({
           variant: "destructive",
           title: "Firebase Not Configured",
