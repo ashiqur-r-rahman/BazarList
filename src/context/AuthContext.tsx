@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { onAuthStateChanged, User, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, User, signInWithPopup, FirebaseError } from 'firebase/auth';
 import { auth, googleProvider, firebaseInitialized } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
@@ -41,7 +41,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           title: "Firebase Not Configured",
           description: "Please add your Firebase credentials to .env.local to enable login.",
         });
-        console.error("Firebase is not configured. Please add your Firebase credentials to .env.local");
         return;
     }
     try {
@@ -53,17 +52,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     } catch (error) {
       console.error("Error signing in with Google: ", error);
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "There was a problem signing in with Google. Please try again.",
-      });
+      if (error instanceof FirebaseError && error.code === 'auth/configuration-not-found') {
+         toast({
+            variant: "destructive",
+            title: "Configuration Error",
+            description: "Google Sign-In is not enabled for this project. Please enable it in your Firebase Console.",
+          });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: "There was a problem signing in with Google. Please try again.",
+        });
+      }
     }
   };
 
   const logout = async () => {
      if (!firebaseInitialized || !auth) {
-        console.error("Firebase is not configured. Cannot log out.");
         toast({
           variant: "destructive",
           title: "Firebase Not Configured",
