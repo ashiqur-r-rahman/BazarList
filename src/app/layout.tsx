@@ -3,6 +3,7 @@ import { PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { BazarProvider } from '@/context/BazarContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 
 const ptSans = PT_Sans({
@@ -23,12 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn("font-body antialiased", ptSans.variable)} suppressHydrationWarning>
-        <BazarProvider>
-          {children}
-          <Toaster />
-        </BazarProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn("font-body antialiased", ptSans.variable)}>
+        <AuthProvider>
+          <BazarProvider>
+            {children}
+            <Toaster />
+          </BazarProvider>
+        </AuthProvider>
       </body>
     </html>
   );

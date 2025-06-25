@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar as CalendarIcon, PlusCircle, Trash2, Check, X, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -18,18 +17,26 @@ import { useBazar } from '@/context/BazarContext';
 import AppLayout from '@/components/AppLayout';
 import type { BazarItem, BazarList } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/context/AuthContext';
 
 export default function NewBazarPage() {
   const router = useRouter();
   const { addBazarList } = useBazar();
+  const { user } = useAuth();
   const { toast } = useToast();
 
-  const [step, setStep] = useState<'date' | 'name' | 'list'>('date');
+  const [step, setStep] = useState<'date' | 'list'>('date');
   
   // Bazar data
   const [bazarDate, setBazarDate] = useState<Date | undefined>();
   const [userName, setUserName] = useState('');
   const [items, setItems] = useState<BazarItem[]>([]);
+
+  useEffect(() => {
+    if (user?.displayName) {
+      setUserName(user.displayName);
+    }
+  }, [user]);
 
   // Item form state
   const [itemName, setItemName] = useState('');
@@ -42,13 +49,6 @@ export default function NewBazarPage() {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setBazarDate(date);
-      setStep('name');
-    }
-  };
-
-  const handleNameSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userName.trim()) {
       setStep('list');
     }
   };
@@ -129,30 +129,8 @@ export default function NewBazarPage() {
                   selected={bazarDate}
                   onSelect={handleDateSelect}
                   className="rounded-md border"
+                  disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                 />
-              </CardContent>
-            </Card>
-          </div>
-        );
-      case 'name':
-        return (
-          <div className="flex flex-col items-center justify-center h-full">
-            <Card className="w-full max-w-md shadow-lg">
-              <CardHeader>
-                 <Button variant="ghost" size="icon" className="absolute top-4 left-4" onClick={() => setStep('date')}><ArrowLeft /></Button>
-                <CardTitle className="text-center font-headline text-2xl">Enter Your Name</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleNameSubmit} className="space-y-4">
-                  <Input
-                    placeholder="Your Name"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    className="text-lg p-6"
-                    required
-                  />
-                  <Button type="submit" className="w-full">Continue</Button>
-                </form>
               </CardContent>
             </Card>
           </div>
@@ -160,9 +138,10 @@ export default function NewBazarPage() {
       case 'list':
         return (
           <div className="space-y-6">
+            <Button variant="ghost" onClick={() => setStep('date')}><ArrowLeft className="mr-2 h-4 w-4" /> Change Date</Button>
             <Card className="bg-accent text-accent-foreground shadow-md">
               <CardHeader className="flex flex-row justify-between items-center">
-                <div className="font-bold">{format(bazarDate!, 'PPP')}</div>
+                <div className="font-bold">{bazarDate ? format(bazarDate, 'PPP') : 'No date selected'}</div>
                 <div className="font-bold">{userName}</div>
               </CardHeader>
             </Card>

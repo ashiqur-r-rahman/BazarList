@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,15 +15,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { Utensils } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { user, signInWithGoogle, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock signup logic
-    router.push("/dashboard");
+    alert("Please use Google Sign up for this demo.");
   };
+
+  if (loading) {
+    return (
+       <div className="flex min-h-screen items-center justify-center p-4">
+        <Card className="mx-auto max-w-sm w-full shadow-lg">
+          <CardHeader className="text-center">
+            <div className="flex justify-center items-center gap-2 mb-2">
+              <Utensils className="h-8 w-8 text-primary" />
+              <CardTitle className="text-3xl font-headline">BazarList</CardTitle>
+            </div>
+          </CardHeader>
+           <CardContent className="grid gap-4">
+             <Skeleton className="h-10 w-full" />
+             <Skeleton className="h-10 w-full" />
+             <Skeleton className="h-10 w-full" />
+             <Skeleton className="h-10 w-full" />
+             <Skeleton className="h-10 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (user) {
+    return null; // Don't render anything while redirecting
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -58,7 +93,7 @@ export default function SignupPage() {
             <Button type="submit" className="w-full">
               Create an account
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={signInWithGoogle} type="button">
               <GoogleIcon className="mr-2 h-4 w-4" />
               Sign up with Google
             </Button>
