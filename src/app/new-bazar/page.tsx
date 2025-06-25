@@ -2,9 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar as CalendarIcon, PlusCircle, Trash2, Check, X, ArrowLeft } from 'lucide-react';
+import { PlusCircle, Trash2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
@@ -18,6 +17,7 @@ import AppLayout from '@/components/AppLayout';
 import type { BazarItem, BazarList } from '@/lib/types';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/context/AuthContext';
+import { nanoid } from 'nanoid';
 
 export default function NewBazarPage() {
   const router = useRouter();
@@ -56,17 +56,27 @@ export default function NewBazarPage() {
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
-    const amount = parseFloat(itemAmount);
-    if (!itemName.trim() || isNaN(amount) || amount <= 0) {
+    if (!itemName.trim()) {
       toast({
         variant: "destructive",
-        title: "Invalid Item",
-        description: "Please enter a valid item name and amount.",
+        title: "Invalid Item Name",
+        description: "Please enter a name for the item.",
       });
       return;
     }
+    
+    const amount = parseFloat(itemAmount);
+    if (!itemAmount || isNaN(amount) || amount <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Amount",
+        description: "Please enter a positive number for the amount.",
+      });
+      return;
+    }
+
     const newItem: BazarItem = {
-      id: crypto.randomUUID(),
+      id: nanoid(),
       name: itemName,
       amount: amount,
       unit: itemUnit,
@@ -112,7 +122,7 @@ export default function NewBazarPage() {
 
   const handleFinish = () => {
     const newList: BazarList = {
-      id: crypto.randomUUID(),
+      id: nanoid(),
       date: bazarDate!.toISOString(),
       userName: userName,
       items: items,
