@@ -36,7 +36,7 @@ export default function LoginPage() {
     await signInWithEmailAndPassword(email, password);
   };
 
-  if (loading) {
+  if (loading||user) {
     return (
        <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="mx-auto max-w-sm w-full shadow-lg">
@@ -57,9 +57,9 @@ export default function LoginPage() {
     )
   }
 
-  if (user) {
-    return null; // Don't render anything while redirecting
-  }
+  // if (user) {
+  //   return null; // Don't render anything while redirecting
+  // }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
