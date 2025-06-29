@@ -14,9 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
-import { Utensils } from "lucide-react";
+import { Utensils, Loader2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -37,31 +36,13 @@ export default function SignupPage() {
     await signUpWithEmailAndPassword(email, password, fullName);
   };
 
-  if (loading||user) {
+  if (loading || user) {
     return (
-       <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="mx-auto max-w-sm w-full shadow-lg">
-          <CardHeader className="text-center">
-            <div className="flex justify-center items-center gap-2 mb-2">
-              <Utensils className="h-8 w-8 text-primary" />
-              <CardTitle className="text-3xl font-headline">BazarList</CardTitle>
-            </div>
-          </CardHeader>
-           <CardContent className="grid gap-4">
-             <Skeleton className="h-10 w-full" />
-             <Skeleton className="h-10 w-full" />
-             <Skeleton className="h-10 w-full" />
-             <Skeleton className="h-10 w-full" />
-             <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
+      <div className="flex min-h-screen items-center justify-center p-4 bg-background">
+        <Loader2 className="h-16 w-16 animate-spin text-primary" />
       </div>
     )
   }
-
-  // if (user) {
-  //   return null; // Don't render anything while redirecting
-  // }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
