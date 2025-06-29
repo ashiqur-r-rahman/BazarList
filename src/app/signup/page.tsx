@@ -37,7 +37,7 @@ export default function SignupPage() {
     await signUpWithEmailAndPassword(email, password, fullName);
   };
 
-  if (loading) {
+  if (loading||user) {
     return (
        <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="mx-auto max-w-sm w-full shadow-lg">
@@ -59,9 +59,9 @@ export default function SignupPage() {
     )
   }
 
-  if (user) {
-    return null; // Don't render anything while redirecting
-  }
+  // if (user) {
+  //   return null; // Don't render anything while redirecting
+  // }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
