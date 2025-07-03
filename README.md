@@ -1,6 +1,6 @@
 # BazarList
 
-url: https://bazar-list-three.vercel.app
+url: https://bazar-list-one.vercel.app/deshboard
 
 BazarList is a comprehensive and user-friendly application designed to simplify and streamline your shopping experience. Whether you're managing weekly groceries or planning a special event, BazarList provides an intuitive platform to organize, track, and share your shopping lists with ease.
 
