@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,10 +25,11 @@ export default function NewBazarPage() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const [step, setStep] = useState<'date' | 'list'>('date');
+  const [step, setStep] = useState<'details' | 'list'>('details');
   const [isSaving, setIsSaving] = useState(false);
   
   // Bazar data
+  const [bazarName, setBazarName] = useState('');
   const [bazarDate, setBazarDate] = useState<Date | undefined>();
   const [userName, setUserName] = useState('');
   const [items, setItems] = useState<BazarItem[]>([]);
@@ -48,12 +49,17 @@ export default function NewBazarPage() {
   const [priceEntryItem, setPriceEntryItem] = useState<BazarItem | null>(null);
   const [currentPrice, setCurrentPrice] = useState('');
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      setBazarDate(date);
-      setStep('list');
+  const handleContinue = () => {
+    if (!bazarDate) {
+        toast({
+            variant: "destructive",
+            title: "Missing Date",
+            description: "Please select a date for your bazar list.",
+        });
+        return;
     }
-  };
+    setStep('list');
+  }
 
   const handleAddItem = (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,16 +141,18 @@ export default function NewBazarPage() {
       toast({
           variant: "destructive",
           title: "Missing Date",
-          description: "Please select a date for the bazar list.",
+          description: "Please provide a date for the bazar list.",
       });
-      setStep('date');
+      setStep('details');
       return;
     }
 
     setIsSaving(true);
     try {
+      const finalBazarName = bazarName.trim() || `Bazar - ${format(bazarDate, 'PPP')}`;
       const newList: BazarList = {
         id: nanoid(),
+        name: finalBazarName,
         date: bazarDate.toISOString(),
         userName: userName,
         userId: user.uid,
@@ -170,71 +178,93 @@ export default function NewBazarPage() {
 
   const renderContent = () => {
     switch (step) {
-      case 'date':
+      case 'details':
         return (
           <div className="flex flex-col items-center justify-center h-full">
             <Card className="w-full max-w-md shadow-lg">
               <CardHeader>
-                <CardTitle className="text-center font-headline text-2xl">Select Bazar Date</CardTitle>
+                <CardTitle className="text-center font-headline text-2xl">New Bazar List</CardTitle>
+                <CardDescription className="text-center">Give your list a name (optional) and select a date.</CardDescription>
               </CardHeader>
-              <CardContent className="flex justify-center">
-                <Calendar
-                  mode="single"
-                  selected={bazarDate}
-                  onSelect={handleDateSelect}
-                  className="rounded-md border"
-                  disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-                />
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="bazar-name">Bazar Name</Label>
+                  <Input 
+                    id="bazar-name" 
+                    placeholder="e.g., Weekly Groceries (Optional)" 
+                    value={bazarName}
+                    onChange={(e) => setBazarName(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-center">
+                    <Calendar
+                    mode="single"
+                    selected={bazarDate}
+                    onSelect={setBazarDate}
+                    className="rounded-md border"
+                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                    />
+                </div>
               </CardContent>
+              <CardFooter>
+                 <Button className="w-full" onClick={handleContinue} disabled={!bazarDate}>
+                    Continue
+                </Button>
+              </CardFooter>
             </Card>
           </div>
         );
       case 'list':
         return (
           <div className="space-y-6">
-            <Button variant="ghost" onClick={() => setStep('date')}><ArrowLeft className="mr-2 h-4 w-4" /> Change Date</Button>
+            <Button variant="ghost" onClick={() => setStep('details')}><ArrowLeft className="mr-2 h-4 w-4" /> Change Details</Button>
             <Card className="bg-accent text-accent-foreground shadow-md">
-              <CardHeader className="flex flex-row justify-between items-center">
-                <div className="font-bold">{bazarDate ? format(bazarDate, 'PPP') : 'No date selected'}</div>
-                <div className="font-bold">{userName}</div>
+              <CardHeader>
+                <CardTitle className="font-headline">{bazarName.trim() || (bazarDate ? `Bazar - ${format(bazarDate, 'PPP')}` : 'New Bazar')}</CardTitle>
+                <CardDescription className="text-accent-foreground/80 flex justify-between items-center pt-1">
+                    <span>{bazarDate ? format(bazarDate, 'PPP') : 'No date selected'}</span>
+                    <span>{userName}</span>
+                </CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="shadow-lg">
               <CardContent className="p-4">
-                <form onSubmit={handleAddItem} className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
-                  <div className="flex-grow min-w-[100px]">
-                     <Label htmlFor="item-name">Item Name</Label>
-                    <Input id="item-name" placeholder="e.g., Rice, Potatoes" value={itemName} onChange={(e) => setItemName(e.target.value)} />
+                 <form onSubmit={handleAddItem} className="flex flex-col sm:flex-nowrap gap-2">
+                  <div className="flex flex-wrap sm:flex-nowrap gap-2 items-end">
+                    <div className="flex-grow min-w-[150px] sm:min-w-0 sm:w-auto">
+                       <Label htmlFor="item-name">Item Name</Label>
+                      <Input id="item-name" placeholder="e.g., Rice, Potatoes" value={itemName} onChange={(e) => setItemName(e.target.value)} />
+                    </div>
+                    <div className="w-24 flex-shrink-0">
+                      <Label htmlFor="item-amount">Amount</Label>
+                      <Input
+                        id="item-amount"
+                        type="number"
+                        placeholder="0"
+                        value={itemAmount}
+                        onChange={(e) => setItemAmount(e.target.value)}
+                        className="w-20"
+                        min="0"
+                      />
+                    </div>
+                    <div className="w-28 flex-shrink-0">
+                      <Label htmlFor="item-unit">Unit</Label>
+                      <Select value={itemUnit} onValueChange={(value: BazarItem['unit']) => setItemUnit(value)}>
+                        <SelectTrigger id="item-unit" className="w-24">
+                          <SelectValue placeholder="Unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pcs">pcs</SelectItem>
+                          <SelectItem value="kg">kg</SelectItem>
+                          <SelectItem value="liter">liter</SelectItem>
+                          <SelectItem value="gram">gram</SelectItem>
+                          <SelectItem value="dz">dz</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button type="submit" size="icon"><PlusCircle className="h-4 w-4" /></Button>
                   </div>
-                  <div>
-                    <Label htmlFor="item-amount">Amount</Label>
-                    <Input
-                      id="item-amount"
-                      type="number"
-                      placeholder="0"
-                      value={itemAmount}
-                      onChange={(e) => setItemAmount(e.target.value)}
-                      className="w-20"
-                      min="0"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="item-unit">Unit</Label>
-                    <Select value={itemUnit} onValueChange={(value: BazarItem['unit']) => setItemUnit(value)}>
-                      <SelectTrigger id="item-unit" className="w-24">
-                        <SelectValue placeholder="Unit" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pcs">pcs</SelectItem>
-                        <SelectItem value="kg">kg</SelectItem>
-                        <SelectItem value="liter">liter</SelectItem>
-                        <SelectItem value="gram">gram</SelectItem>
-                        <SelectItem value="dz">dz</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button type="submit" size="icon"><PlusCircle className="h-4 w-4" /></Button>
                 </form>
               </CardContent>
             </Card>
