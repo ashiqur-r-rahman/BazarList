@@ -188,10 +188,10 @@ export default function NewBazarPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="bazar-name">Bazar Name</Label>
+                  <Label htmlFor="bazar-name">Who in Bazar</Label>
                   <Input 
                     id="bazar-name" 
-                    placeholder="e.g., Weekly Groceries (Optional)" 
+                    placeholder="e.g.,Name (Optional)" 
                     value={bazarName}
                     onChange={(e) => setBazarName(e.target.value)}
                   />
