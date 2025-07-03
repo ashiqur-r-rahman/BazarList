@@ -29,7 +29,7 @@ export default function HistoryPage() {
 
   const calculateTotal = (list: BazarList) => {
     return list.items.reduce((total, item) => {
-      if (item.price) {
+      if (item.isChecked && item.price) {
         return total + item.price;
       }
       return total;
@@ -108,8 +108,8 @@ export default function HistoryPage() {
               <Link href={`/history/${list.id}`} key={list.id}>
                 <Card className="hover:shadow-lg hover:border-primary transition-all">
                   <CardHeader>
-                    <CardTitle>{format(new Date(list.date), 'PPP')}</CardTitle>
-                    <CardDescription>Created by {list.userName}</CardDescription>
+                    <CardTitle>{list.name}</CardTitle>
+                    <CardDescription>{format(new Date(list.date), 'PPP')} &bull; by {list.userName}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground">{list.items.length} items</p>
