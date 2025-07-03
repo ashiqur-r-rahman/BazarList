@@ -10,6 +10,7 @@ export type BazarItem = {
 export type BazarList = {
   id: string;
   date: string; // Storing date as ISO string
+  name:string;
   userName: string;
   userId: string;
   items: BazarItem[];
