@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useBazar } from '@/context/BazarContext';
 import AppLayout from '@/components/AppLayout';
 import type { BazarList } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Check, X, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -59,9 +59,12 @@ export default function HistoryDetailPage() {
         </Button>
        <div className="space-y-6">
             <Card className="bg-accent text-accent-foreground shadow-md">
-              <CardHeader className="flex flex-row justify-between items-center">
-                <div className="font-bold">{format(new Date(list.date), 'PPP')}</div>
-                <div className="font-bold">{list.userName}</div>
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold font-headline">{list.name}</CardTitle>
+                <CardDescription className="text-accent-foreground/80 flex justify-between items-center pt-2">
+                    <span>{format(new Date(list.date), 'PPP')}</span>
+                    <span>by {list.userName}</span>
+                </CardDescription>
               </CardHeader>
             </Card>
 
@@ -81,7 +84,7 @@ export default function HistoryDetailPage() {
                 ))}
               </CardContent>
               <CardFooter className="flex justify-end items-center bg-muted p-4 rounded-b-lg">
-                <h3 className="text-xl font-bold font-headline">Total: ৳{totalAmount.toFixed(2)}</h3>
+                <h3 className="text-xl font-bold font-headline">Total Spent: ৳{totalAmount.toFixed(2)}</h3>
               </CardFooter>
             </Card>
         </div>
